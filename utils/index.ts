@@ -3,9 +3,13 @@ import os from "os";
 import { JSXElementConstructor } from "react";
 import { toast } from "react-hot-toast";
 
-export function getPath(name: string) {
-  const isWin = process.platform === "win32";
+const isWin = process.platform === "win32";
 
+export function getPath(name: string) {
+  return `${os.homedir()}${isWin ? "\\" : "/"}${name}`;
+}
+
+export function getTempPath(name: string) {
   return `${os.tmpdir()}${isWin ? "\\" : "/"}${name}`;
 }
 

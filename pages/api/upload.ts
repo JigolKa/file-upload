@@ -4,7 +4,7 @@ import formidable from "formidable";
 import { Storage } from "megajs";
 import fs from "fs";
 import os from "os";
-import { getPath, retrieveIP, slugify } from "@/utils";
+import { getPath, getTempPath, retrieveIP, slugify } from "@/utils";
 import { nanoid } from "nanoid";
 import prisma from "@/prisma/instance";
 import { BASE_URL } from "@/config";
@@ -57,7 +57,7 @@ export default async function handler(
       "." +
       fileParts.at(-1)?.toLowerCase();
 
-    fs.renameSync(getPath(file.newFilename), getPath(newPath));
+    fs.renameSync(getTempPath(file.newFilename), getPath(newPath));
 
     const uploader = data.fields.uploaderName;
 
