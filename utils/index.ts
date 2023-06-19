@@ -147,10 +147,8 @@ export function getDifference(date: Date) {
 
   for (const unit of timeUnits) {
     const unitDifference = Math.floor(difference / unit.duration);
-    if (unitDifference >= 1 && !["minute", "second"].includes(unit.label)) {
+    if (unitDifference >= 1) {
       return `${unitDifference} ${unit.label}${unitDifference > 1 ? "s" : ""}`;
-    } else {
-      return "Now";
     }
   }
 
