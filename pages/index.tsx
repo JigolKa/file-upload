@@ -1,7 +1,11 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import { useRef, useState } from "react";
-import { DocumentPlusIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ArchiveBoxXMarkIcon,
+  DocumentPlusIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { cx, fetcher, getDifference, merge, transformFileSize } from "@/utils";
 import axios from "axios";
 import Input, { InputError, InputLabel } from "@/components/Input";
@@ -173,7 +177,7 @@ export default function Home() {
                 isLoading={isLoading}
                 loadingText="Loading..."
               >
-                Submit
+                Upload
               </Button>
             </div>
           </form>
@@ -183,29 +187,34 @@ export default function Home() {
               Recents files
             </h1>
 
-            <div className="mt-3 md:mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-              {data
-                ? data.map((v) => (
-                    <Card
-                      key={v.id}
-                      className="hover:shadow-md transition hover:bg-blue-500 hover:text-white"
-                    >
-                      <Link href={v.url} target="_blank">
-                        <p className="text-md max-w-prose block dark:text-slate-900 break-words hover:text-white transition">
-                          {v.slug}
-                        </p>
-                        <Detail>{transformFileSize(v.size, true, 0)}</Detail>
-                        <Detail>{v.uploaderName}</Detail>
-                        <Detail>
-                          {getDifference(new Date(v.createdAt)) === "Now"
-                            ? "Now"
-                            : `${getDifference(new Date(v.createdAt))} ago`}
-                        </Detail>
-                      </Link>
-                    </Card>
-                  ))
-                : null}
-            </div>
+            {data?.length ? (
+              <div className="mt-3 md:mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+                {data.map((v) => (
+                  <Card
+                    key={v.id}
+                    className="hover:shadow-md transition hover:bg-blue-500 hover:text-white"
+                  >
+                    <Link href={v.url} target="_blank">
+                      <p className="text-md max-w-prose block dark:text-slate-900 break-words hover:text-white transition">
+                        {v.slug}
+                      </p>
+                      <Detail>{transformFileSize(v.size, true, 0)}</Detail>
+                      <Detail>{v.uploaderName}</Detail>
+                      <Detail>
+                        {getDifference(new Date(v.createdAt)) === "Now"
+                          ? "Now"
+                          : `${getDifference(new Date(v.createdAt))} ago`}
+                      </Detail>
+                    </Link>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center mt-3 md:mt-6 font-semibold">
+                <ArchiveBoxXMarkIcon height={36} width={36} />
+                <span className="text-lg mt-1">No files uploaded yet</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
