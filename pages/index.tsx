@@ -15,7 +15,7 @@ import useSWR from "swr";
 import { File as DatabaseFile } from "@prisma/client";
 import Card from "@/components/Card";
 import Link from "next/link";
-import { BasicProps } from "@/types";
+import { BasicProps, UmamiWindow } from "@/types";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
@@ -68,6 +68,7 @@ export default function Home() {
             "Content-Type": "multipart/form-data",
           },
         })
+        .then(() => (window as UmamiWindow).umami.track("File upload"))
         .finally(() => mutate());
     } catch (error) {
       console.error("🚀 ~ file: index.tsx:35 ~ handler ~ error:", error);
