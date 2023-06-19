@@ -68,6 +68,7 @@ export default async function handler(
         fileName: file.originalFilename || file.newFilename,
         url: `${BASE_URL}/api/file/${newPath}`,
         ipAddress: ip,
+        slug: newPath,
         uploaderName: uploader
           ? uploader instanceof Array
             ? uploader[0]
@@ -81,7 +82,8 @@ export default async function handler(
 
   // res.redirect(302, `/api/file/${newPath}`);
 
-  res.end();
+  res.setHeader("Content-Type", "text/plain");
+  res.send("OK");
 }
 
 export const config = {

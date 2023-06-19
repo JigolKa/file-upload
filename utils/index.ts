@@ -1,6 +1,7 @@
 import { NextApiRequest } from "next";
 import os from "os";
 import { JSXElementConstructor } from "react";
+import { toast } from "react-hot-toast";
 
 export function getPath(name: string) {
   const isWin = process.platform === "win32";
@@ -75,6 +76,17 @@ export function omit<T extends object, K extends keyof T>(
   ) as Omit<T, K>;
 }
 
+export function pick<T extends object, K extends keyof T>(
+  object: T,
+  ...keys: K[]
+) {
+  return keys.reduce(
+    (result, key) =>
+      key in object ? { ...result, [key]: object[key] } : result,
+    {}
+  ) as Pick<T, K>;
+}
+
 export function merge<
   T extends JSXElementConstructor<any> | keyof JSX.IntrinsicElements = "div"
 >(styles: string, rest: React.ComponentProps<T>): React.ComponentProps<T> {
@@ -86,4 +98,61 @@ export function merge<
 
 export function cx(...classes: string[]) {
   return classes.filter(Boolean).join(" ").trim();
+}
+
+export class SWRError extends Error {
+  info?: string;
+  status?: number;
+}
+
+export const fetcher = async (url: string) => {
+  const res = await fetch(url);
+
+  // If the status code is not in the range 200-299,
+  // we still try to parse and throw it.
+  if (!res.ok) {
+    const error = new SWRError("An error occurred while fetching the data.");
+    // Attach extra info to the error object.
+
+    toast.error("An error occured, please try again");
+
+    error.info = await res.json();
+    error.status = res.status;
+    throw error;
+  }
+
+  return res.json();
+};
+
+export function isDatePast(date: Date): boolean {
+  const now = new Date();
+  return date.getTime() < now.getTime();
+}
+
+export function getDifference(date: Date) {
+  const now = new Date();
+  const difference = isDatePast(date)
+    ? now.getTime() - date.getTime()
+    : date.getTime() - now.getTime();
+
+  const timeUnits = [
+    { label: "year", duration: 31536000000 },
+    { label: "month", duration: 2592000000 },
+    { label: "week", duration: 604800000 },
+    { label: "day", duration: 86400000 },
+    { label: "hour", duration: 3600000 },
+    { label: "minute", duration: 60000 },
+    { label: "second", duration: 1000 },
+  ];
+
+  for (const unit of timeUnits) {
+    const unitDifference = Math.floor(difference / unit.duration);
+    if (unitDifference >= 1 && !["minute", "second"].includes(unit.label)) {
+      return `${unitDifference} ${unit.label}${unitDifference > 1 ? "s" : ""}`;
+    } else {
+      return "Now";
+    }
+  }
+
+  return "Now";
 }

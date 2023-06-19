@@ -16,6 +16,7 @@ model File {
   fileName     String
   mimeType     String?
   uploaderName String?
+  slug         String
   size         Float
   ipAddress    String?
   createdAt    DateTime @default(now())
