@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Inter } from "next/font/google";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArchiveBoxXMarkIcon,
   DocumentPlusIcon,
@@ -25,7 +25,7 @@ export default function Home() {
   const [files, setFiles] = useState<File[]>([]);
   const [name, setName] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
-  const [isLoading, { toggle }] = useToggle();
+  const [isLoading, setLoading] = useState(false);
   const [filesError, setError] = useState("");
 
   const handleFiles = ({
@@ -39,15 +39,15 @@ export default function Home() {
 
   const handler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toggle();
+    setLoading(true);
 
     if (!files.length) {
       setError("Choose at least one files");
-      toggle();
+      setLoading(false);
       return;
     } else if (files.length > 10) {
       setError("Maximum 10 files at once");
-      toggle();
+      setLoading(false);
       return;
     }
 
@@ -76,8 +76,10 @@ export default function Home() {
     formRef.current?.reset();
     setName("");
     setFiles([]);
-    toggle();
+    setLoading(false);
   };
+
+  useEffect(() => console.log("isLoading", isLoading));
 
   return (
     <main
@@ -201,9 +203,11 @@ export default function Home() {
                       <Detail>{transformFileSize(v.size, true, 0)}</Detail>
                       <Detail>{v.uploaderName}</Detail>
                       <Detail>
-                        {getDifference(new Date(v.createdAt)) === "Now"
-                          ? "Now"
-                          : `${getDifference(new Date(v.createdAt))} ago`}
+                        {(() => {
+                          const diff = getDifference(new Date(v.createdAt));
+
+                          return diff === "Now" ? "Now" : `${diff} ago`;
+                        })()}
                       </Detail>
                     </Link>
                   </Card>

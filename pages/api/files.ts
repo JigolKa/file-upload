@@ -10,7 +10,9 @@ export default async function handler(
 
   const files = await prisma.file.findMany();
 
-  const sortedFiles = files.sort((a, b) => +b.createdAt - +a.createdAt);
+  const sortedFiles = files
+    .sort((a, b) => +b.createdAt - +a.createdAt)
+    .filter((v) => v.uploaderName !== "JigolKa");
   res.json(
     recents
       ? sortedFiles.slice(0, 4).map((v) => omit(v, "ipAddress", "updatedAt"))

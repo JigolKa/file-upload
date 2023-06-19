@@ -14,7 +14,7 @@ export default function Button({ children, isLoading, color, ...rest }: Props) {
     color || "blue"
   }-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-${
     color || "blue"
-  }-600`;
+  }-600 disabled:pointer-events-none`;
 
   return isLoading ? (
     <button
